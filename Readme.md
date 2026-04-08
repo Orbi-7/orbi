@@ -1,1 +1,0 @@
-Orbi is an AI-powered business chatbot that lets users manage their operations through natural conversation. Connect your apps via OAuth, and let the LangGraph agent handle the rest — emails, tasks, schedules, and more — all from one chat interface, powered by 50+ Composio integrations.
