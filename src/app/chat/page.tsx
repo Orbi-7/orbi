@@ -17,6 +17,7 @@ import { UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { BrokenCubeLogo } from "@/components/BrokenCubeLogo";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default function ChatPage() {
   const searchParams = useSearchParams();
@@ -297,6 +298,7 @@ export default function ChatPage() {
         )}
         <BrokenCubeLogo href="/" size="md" />
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <Button
             variant="outline"
             size="sm"

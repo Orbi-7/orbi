@@ -3,6 +3,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { ConvexClientProvider } from "./ConvexClientProvider";
 import { GlobalSearchHandler } from "@/components/chat/GlobalSearchHandler";
+import { ThemeProvider } from "@/lib/theme-provider";
 
 export const metadata: Metadata = {
   title: "ORBI",
@@ -26,10 +27,12 @@ export default function RootLayout({
           />
         </head>
         <body className="antialiased">
-          <ConvexClientProvider>
-            <GlobalSearchHandler />
-            {children}
-          </ConvexClientProvider>
+          <ThemeProvider>
+            <ConvexClientProvider>
+              <GlobalSearchHandler />
+              {children}
+            </ConvexClientProvider>
+          </ThemeProvider>
         </body>
       </html>
     </ClerkProvider>

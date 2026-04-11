@@ -5,6 +5,7 @@ import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { BrokenCubeLogo } from "@/components/BrokenCubeLogo";
 import { Check, ArrowRight, HelpCircle } from "lucide-react";
 import { useState } from "react";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default function PricingPage() {
   const [annual, setAnnual] = useState(false);
@@ -85,6 +86,7 @@ export default function PricingPage() {
             </Link>
           </nav>
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <SignedOut>
               <Link href="/sign-in" className="rounded-full border border-[var(--border)] px-5 py-2.5 text-sm font-medium transition hover:bg-[var(--muted)]/50">
                 Sign in

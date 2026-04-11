@@ -9,6 +9,7 @@ import { Check, ExternalLink, User } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { UserButton } from "@clerk/nextjs";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 interface ToolStatus {
   name: string;
@@ -59,6 +60,7 @@ export default function ConnectorsPage() {
         <div className="mx-auto flex h-14 max-w-4xl items-center justify-between rounded-2xl border border-[var(--border)] bg-[var(--background)]/70 px-6 backdrop-blur-md">
           <BrokenCubeLogo href="/" size="md" />
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <Link href="/chat">
               <Button variant="outline" size="sm" className="border-[var(--border)]">
                 Open Chat

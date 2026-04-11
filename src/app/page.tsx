@@ -5,6 +5,7 @@ import { CubeStackGame } from "@/components/CubeStackGame";
 import { AnimateSection } from "@/components/AnimateSection";
 import { APPS } from "@/lib/apps";
 import { MessageSquare, Zap, Shield, ArrowRight } from "lucide-react";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export default function Home() {
   return (
@@ -28,6 +29,7 @@ export default function Home() {
             </Link>
           </nav>
           <div className="flex items-center gap-3">
+            <ThemeToggle />
             <SignedOut>
               <Link
                 href="/sign-in"
