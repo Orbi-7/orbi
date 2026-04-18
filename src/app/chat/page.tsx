@@ -99,20 +99,44 @@ export default function ChatPage() {
   } = useChat({
     transport,
     onFinish: async ({ message }) => {
-      if (activeConversationId) {
-        const text =
-          typeof (message as { parts?: Array<{ type: string; text?: string }> })
-            .parts === "undefined"
-            ? ""
-            : (message as { parts: Array<{ type: string; text?: string }> }).parts
-                .filter((p) => p.type === "text")
-                .map((p) => p.text ?? "")
-                .join("");
-        await addMessage({
-          conversationId: activeConversationId,
-          role: "assistant",
-          content: text,
-        });
+      try {
+        if (activeConversationId) {
+          const text =
+            typeof (message as { parts?: Array<{ type: string; text?: string }> })
+              .parts === "undefined"
+              ? ""
+              : (message as { parts: Array<{ type: string; text?: string }> }).parts
+                  .filter((p) => p.type === "text")
+                  .map((p) => p.text ?? "")
+                  .join("");
+
+          if (!text?.trim()) {
+            // Handle empty response with fallback
+            const fallbackText = "I apologize, but I wasn't able to generate a response. This might be due to a temporary service issue. Please try rephrasing your question.";
+            await addMessage({
+              conversationId: activeConversationId,
+              role: "assistant",
+              content: fallbackText,
+            });
+            return;
+          }
+
+          await addMessage({
+            conversationId: activeConversationId,
+            role: "assistant",
+            content: text,
+          });
+        }
+      } catch (error) {
+        console.error("[ORBI] Error saving assistant message:", error);
+        // Add error message to chat
+        if (activeConversationId) {
+          await addMessage({
+            conversationId: activeConversationId,
+            role: "assistant",
+            content: "I encountered an error while processing your request. Please try again.",
+          });
+        }
       }
     },
   });
@@ -213,29 +237,39 @@ export default function ChatPage() {
   );
 
   const handleSendWithMessage = useCallback(
-    (userContent: string) => {
+    async (userContent: string) => {
       if (!userContent.trim()) return;
       const text = userContent.trim();
       setInput("");
-      const doSend = () => sendMessage({ text });
-      if (!isSignedIn) {
-        doSend();
-        return;
-      }
-      if (!activeConversationId) {
-        const title = text.length > 40 ? text.slice(0, 40) + "…" : text;
-        createConversation({ userId, title }).then((id) => {
-          setActiveConversationId(id);
-          addMessage({ conversationId: id, role: "user", content: text });
+
+      try {
+        const doSend = () => sendMessage({ text });
+        if (!isSignedIn) {
           doSend();
-        });
-      } else {
-        addMessage({
-          conversationId: activeConversationId,
-          role: "user",
-          content: text,
-        });
-        doSend();
+          return;
+        }
+        if (!activeConversationId) {
+          const title = text.length > 40 ? text.slice(0, 40) + "…" : text;
+          const conversationId = await createConversation({ userId, title });
+          setActiveConversationId(conversationId);
+          await addMessage({ conversationId, role: "user", content: text });
+          doSend();
+        } else {
+          await addMessage({
+            conversationId: activeConversationId,
+            role: "user",
+            content: text,
+          });
+          doSend();
+        }
+      } catch (error) {
+        console.error("[ORBI] Error sending message:", error);
+        // Add an error message to the chat
+        setMessages(prev => [...prev, {
+          id: `error-${Date.now()}`,
+          role: "assistant",
+          parts: [{ type: "text", text: "Sorry, I encountered an error while processing your message. Please try again." }]
+        }]);
       }
     },
     [
@@ -245,6 +279,7 @@ export default function ChatPage() {
       createConversation,
       addMessage,
       sendMessage,
+      setMessages,
     ]
   );
 
