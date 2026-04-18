@@ -32,6 +32,7 @@ interface SettingsPanelProps {
 export function SettingsPanel({ isOpen, onClose, userId }: SettingsPanelProps) {
   const [toolkits, setToolkits] = useState<ToolStatus[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [connectingToolkit, setConnectingToolkit] = useState<string | null>(null);
 
   useEffect(() => {
@@ -42,13 +43,36 @@ export function SettingsPanel({ isOpen, onClose, userId }: SettingsPanelProps) {
 
   const fetchToolkits = async () => {
     setLoading(true);
+    setError(null);
+
     try {
       const res = await fetch(
         `/api/composio/toolkits?userId=${encodeURIComponent(userId)}`
       );
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => null);
+        const message =
+          errorData?.error ||
+          `Failed to load connected tools (${res.status}). Please try again.`;
+        setError(message);
+        setToolkits([]);
+        return;
+      }
+
       const data = await res.json();
-      if (data.toolkits) setToolkits(data.toolkits);
-    } catch {
+      if (data.toolkits) {
+        setToolkits(data.toolkits);
+        setError(null);
+      } else {
+        setError("No tools were returned. Please retry.");
+        setToolkits([]);
+      }
+    } catch (fetchError) {
+      console.error("[ORBI] Fetch toolkits error:", fetchError);
+      setError(
+        "Unable to load connected tools. Please check your connection and try again."
+      );
       setToolkits([]);
     } finally {
       setLoading(false);
@@ -97,6 +121,13 @@ export function SettingsPanel({ isOpen, onClose, userId }: SettingsPanelProps) {
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="h-8 w-8 animate-spin text-[var(--foreground)]/50" />
+            </div>
+          ) : error ? (
+            <div className="space-y-4 rounded-lg border border-red-500/30 bg-red-500/5 p-4 text-sm text-red-700">
+              <p>{error}</p>
+              <Button variant="outline" size="sm" onClick={fetchToolkits}>
+                Retry
+              </Button>
             </div>
           ) : (
             <div className="space-y-2">
