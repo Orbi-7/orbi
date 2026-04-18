@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, ExternalLink, Loader2, X } from "lucide-react";
+import { Check, ExternalLink, Loader2, X, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const POPULAR_TOOLS = [
@@ -34,6 +34,7 @@ export function SettingsPanel({ isOpen, onClose, userId }: SettingsPanelProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [connectingToolkit, setConnectingToolkit] = useState<string | null>(null);
+  const [disconnectingToolkit, setDisconnectingToolkit] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen && userId) {
@@ -89,8 +90,46 @@ export function SettingsPanel({ isOpen, onClose, userId }: SettingsPanelProps) {
       if (data.redirectUrl) {
         window.location.href = data.redirectUrl;
       }
-    } catch {
+    } catch (err) {
+      console.error(`[ORBI] Connect error for ${toolkitId}:`, err);
       setConnectingToolkit(null);
+      setError("Failed to start connection. Please try again.");
+    }
+  };
+
+  const handleDisconnect = async (toolkitId: string) => {
+    setDisconnectingToolkit(toolkitId);
+    setError(null);
+
+    try {
+      const res = await fetch(`/api/composio/disconnect`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId, toolkit: toolkitId }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => null);
+        setError(
+          errorData?.error || "Failed to disconnect tool. Please try again."
+        );
+        setDisconnectingToolkit(null);
+        return;
+      }
+
+      // Remove the disconnected tool from the list
+      setToolkits((prev) =>
+        prev.map((t) =>
+          t.slug?.toLowerCase() === toolkitId.toLowerCase() || t.name?.toLowerCase() === toolkitId.toLowerCase()
+            ? { ...t, isConnected: false }
+            : t
+        )
+      );
+      setDisconnectingToolkit(null);
+    } catch (err) {
+      console.error(`[ORBI] Disconnect error for ${toolkitId}:`, err);
+      setError("Unable to disconnect. Please check your connection and try again.");
+      setDisconnectingToolkit(null);
     }
   };
 
@@ -147,23 +186,41 @@ export function SettingsPanel({ isOpen, onClose, userId }: SettingsPanelProps) {
                         <Check className="h-4 w-4 text-[var(--accent)]" />
                       )}
                     </div>
-                    <Button
-                      size="sm"
-                      variant={connected ? "outline" : "default"}
-                      disabled={connectingToolkit === tool.id}
-                      onClick={() => handleConnect(tool.id)}
-                      className={!connected ? "bg-[var(--accent)] text-[var(--accent-foreground)]" : ""}
-                    >
-                      {connectingToolkit === tool.id ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : connected ? (
-                        "Connected"
+                    <div className="flex gap-2">
+                      {connected ? (
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          disabled={disconnectingToolkit === tool.id}
+                          onClick={() => handleDisconnect(tool.id)}
+                          className="text-red-600 hover:bg-red-500/10 hover:text-red-700"
+                        >
+                          {disconnectingToolkit === tool.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <>
+                              <Trash2 className="h-4 w-4" />
+                            </>
+                          )}
+                        </Button>
                       ) : (
-                        <>
-                          Connect <ExternalLink className="ml-1 h-3 w-3" />
-                        </>
+                        <Button
+                          size="sm"
+                          variant="default"
+                          disabled={connectingToolkit === tool.id}
+                          onClick={() => handleConnect(tool.id)}
+                          className="bg-[var(--accent)] text-[var(--accent-foreground)]"
+                        >
+                          {connectingToolkit === tool.id ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <>
+                              Connect <ExternalLink className="ml-1 h-3 w-3" />
+                            </>
+                          )}
+                        </Button>
                       )}
-                    </Button>
+                    </div>
                   </div>
                 );
               })}
