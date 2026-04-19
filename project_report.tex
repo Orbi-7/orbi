@@ -1,0 +1,174 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{titlesec}
+\usepackage{float}
+\usepackage{setspace}
+\usepackage{cite}
+\geometry{margin=1in}
+
+% --- Formatting ---
+\setstretch{1.5} % Academic standard linespacing
+
+\begin{document}
+
+% --- Title Page ---
+\begin{titlepage}
+    \begin{center}
+        \vspace*{2cm}
+        
+        \Huge
+        \textbf{Design and Implementation of an Agentic AI Interface for Information Unification across Third-Party Platforms}
+        
+        \vspace{1.5cm}
+        
+        \Large
+        A comprehensive implementation report for the ORBI (Tool Insights Chat) framework
+        
+        \vspace{2cm}
+        
+        \textbf{Author Name} \\ % Replace with actual name
+        \vspace{0.5cm}
+        \large Department of Computer Science / Software Engineering
+        
+        \vspace{3cm}
+        
+        \vfill
+        
+        \large \today
+        
+    \end{center}
+\end{titlepage}
+
+\newpage
+
+% --- Abstract ---
+\begin{abstract}
+\noindent
+As enterprise environments increasingly rely on decentralized Software as a Service (SaaS) platforms, workers face significant cognitive friction due to persistent context switching. Traditional information retrieval systems lack the contextual understanding necessary to search and synthesize cross-platform data. In this paper, we present ORBI (Tool Insights Chat), an autonomous, agentic system designed to unify fragmented digital workspaces. By leveraging Large Language Models (LLMs) instructed through function-calling paradigms, ORBI integrates directly with platforms such as Jira, Slack, GitHub, and Google Workspace. Implemented using Next.js, Convex, and the Vercel AI SDK—with Composio orchestrating secure tool execution via OAuth—the proposed architecture demonstrates a highly responsive, real-time query interface. This report outlines the system architecture, discusses the implementation methodology, evaluates observability using Langfuse, and presents the operational results of the system in a simulated enterprise context.
+\end{abstract}
+
+\newpage
+\tableofcontents
+\newpage
+
+% --- 1. Introduction ---
+\section{Introduction}
+\label{sec:intro}
+In contemporary workflow environments, knowledge is siloed across dozens of specialized applications. For instance, project specifications reside in Jira, active conversations in Slack, code repositories in GitHub, and schedules in Google Calendar. Moving between these platforms—a phenomenon termed \textit{context switching}—has been empirically shown to decrease productivity and elevate cognitive load.
+
+To mitigate this operational inefficiency, this project introduces ORBI, a full-stack, autonomous artificial intelligence interface. ORBI operates beyond the boundaries of traditional rules-based chatbots. Instead, it utilizes an agentic framework where an underlying Large Language Model (LLM) is provided with programmatic "tools." When a human user requests an update, the model determines which third-party tool to invoke, initiates the API request, and synthetically constructs a unified natural language answer. 
+
+\section{System Objectives}
+The core objectives guiding the architectural design of this system are:
+\begin{enumerate}
+    \item \textbf{Autonomous Tool Invocation}: To allow the agent to execute real-world APIs independently based on inferred user intent.
+    \item \textbf{Real-Time Responsiveness}: To ensure latency is minimized by employing HTTP streaming responses and a real-time reactive database.
+    \item \textbf{Secure Authentication}: To protect User-level OAuth tokens while restricting data access to authorized individuals only.
+    \item \textbf{Observability}: To establish robust debugging trails using LLM traces that monitor token use, latency, and step-by-step reasoning.
+\end{enumerate}
+
+% --- 2. Methodology & Architecture ---
+\section{Methodology and Architecture}
+\label{sec:methodology}
+
+The system relies on a client-server paradigm decoupled through serverless Edge functions. The flow represents a complex event-driven lifecycle managed concurrently by several modern frameworks.
+
+\subsection{Tech Stack Selection}
+The system synthesizes the following technologies to accomplish the objectives:
+\begin{itemize}
+    \item \textbf{Next.js 16 \& React 19}: Functions as the core framework, handling routing (App Router) and the user interface.
+    \item \textbf{Convex}: A real-time backend platform that maintains the globally synchronized state of `conversations` and `messages`.
+    \item \textbf{Vercel AI SDK}: Used for managing the continuous real-time stream of text generation from the LLM, managing the history, and orchestrating function tools.
+    \item \textbf{Composio}: Serves as the middle-layer tool gateway. It handles OAuth handshakes and translates the LLM's function invocation into standardized third-party API calls (e.g., retrieving emails from Gmail).
+    \item \textbf{Langfuse}: Integrated directly into the telemetry pipeline via OpenTelemetry to record granular invocation traces.
+\end{itemize}
+
+\subsection{Data Persistence and Schema}
+Information relating to user chat history requires persistent storage with immediate retrieval. Convex replaces traditional SQL databases to manage real-time updates. The schema is normalized into two entities:
+\begin{itemize}
+    \item \textbf{Conversations Table}: Records metadata per thread including \texttt{userId}, \texttt{title}, and temporal markers.
+    \item \textbf{Messages Table}: A child entity recording the conversational context including the \texttt{role} (System, User, Assistant), raw \texttt{content}, and metadata about which \texttt{toolCalls} the AI invoked during generation.
+\end{itemize}
+
+\subsection{Execution Workflow}
+The runtime lifecycle of an ORBI query operates in four fundamental stages:
+\begin{enumerate}
+    \item \textbf{Input Analysis}: A user prompt (e.g., "Summarize my active Jira tickets") is transmitted via Next.js Edge APIs.
+    \item \textbf{LLM Evaluation}: The underlying LLM considers the input against the suite of connected Composio tools arrayed in its system prompt.
+    \item \textbf{Function Calling}: The LLM pauses generation and outputs a JSON object requesting the \texttt{COMPOSIO\_JIRA\_SEARCH} tool. 
+    \item \textbf{Synthesis}: Composio executes the query. The resulting JSON payload is fed back to the LLM, which finally streams the formatted string to the Next.js client.
+\end{enumerate}
+
+% --- 3. Implementation and Results ---
+\section{Implementation Results \& Interfaces}
+\label{sec:results}
+
+The frontend interface relies on Tailwind CSS to present a seamless conversational UI. The architecture has been successfully executed locally without performance bottlenecking. 
+
+\subsection{Connectors Interface}
+To ensure strict security and access delegation, the application exposes a `/connectors` route. This is where users authorize the system to interface with their personal accounts. Authentication states are tied securely to the user ID via Clerk.
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.8\textwidth]{images/connectors.png}
+    \vspace{6cm} % Placeholder space
+    \caption{The Configuration Interface managing active Composio integrations for third-party tools.}
+    \label{fig:connectors}
+\end{figure}
+
+\subsection{Conversational Interface}
+The \texttt{/chat} route displays history dynamically loaded through Convex reactive bindings. Tool calls are rendered cleanly into the conversation flow, avoiding exposing users to raw JSON from the execution. 
+
+\begin{figure}[H]
+    \centering
+    % \includegraphics[width=0.8\textwidth]{images/chat_interface.png}
+    \vspace{6cm} % Placeholder space
+    \caption{The core ORBI chat interface, displaying a successful unification query pulling live data.}
+    \label{fig:chat}
+\end{figure}
+
+% --- 4. Critical Evaluation ---
+\section{Evaluation and Observability}
+\label{sec:evaluation}
+Evaluating non-deterministic generation models requires telemetry. Using Langfuse, each interaction—ranging from initial prompt to final generation—is constructed into a "Trace." Langfuse metrics confirmed that:
+\begin{itemize}
+    \item The model strictly adheres to tool instructions given by Composio without hallucinating fictional tools.
+    \item Multi-step workflows (e.g., searching an email then mapping it to a calendar event) function reliably, albeit with slightly increased time-to-first-token (TTFT) metrics due to external API latency limitations.
+\end{itemize}
+A significant challenge noted during implementation involved handling empty model responses when maximum token step limits were met prior to synthesis. Hardcoded prompt engineering via the Vercel AI SDK was utilized to forcibly demand an overarching textual conclusion.
+
+% --- 5. Conclusion ---
+\section{Conclusion and Future Enhancements}
+\label{sec:conclusion}
+ORBI successfully proves the viability of agent-based system architectures in reducing software platform fragmentation. By moving away from predefined logic chains to autonomous LLM tool calling, the system remains infinitely scalable—adding support for new endpoints requires only connecting a new Composio toolkit rather than hardcoding new middleware logic.
+
+\textbf{Future Work}: Future iterations of this architecture aim to introduce \textit{LangGraph}. Transitioning from the linear Vercel AI function-calling execution to a cyclical graph-based methodology will empower the agent with self-reflection. An agent built on LangGraph could critically evaluate its own fetched API results and automatically retry with modified search parameters if initial responses are unsatisfactory, bridging the gap towards full Artificial General Intelligence (AGI) within restricted operational domains.
+
+\newpage
+% --- References ---
+\begin{thebibliography}{9}
+
+\bibitem{vercelai}
+Vercel AI SDK Documentation. \textit{Vercel Inc.}, 2024. [Online]. Available: \url{https://sdk.vercel.ai/}
+
+\bibitem{convex}
+Convex Developer Documentation. \textit{Convex Inc.}, 2024. [Online]. Available: \url{https://docs.convex.dev/}
+
+\bibitem{composio}
+Composio Platform Guide. \textit{Composio}, 2024. [Online]. Available: \url{https://platform.composio.dev/}
+
+\bibitem{langfuse}
+Langfuse: Open Source LLM Observability. \textit{Langfuse}, 2024. [Online]. Available: \url{https://langfuse.com/}
+
+\bibitem{react}
+React 19 release architecture and specifications. \textit{Meta Platforms}, 2024. [Online]. Available: \url{https://react.dev/}
+
+\end{thebibliography}
+
+\end{document}
