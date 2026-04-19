@@ -6,10 +6,12 @@ import { convertToModelMessages, streamText, stepCountIs } from "ai";
 import { langfuseSpanProcessor } from "../../../../instrumentation";
 import { after } from "next/server";
 
-const composio = new Composio({
-  apiKey: process.env.COMPOSIO_API_KEY!,
-  provider: new VercelProvider(),
-});
+function getComposio() {
+  return new Composio({
+    apiKey: process.env.COMPOSIO_API_KEY as string,
+    provider: new VercelProvider(),
+  });
+}
 
 export const maxDuration = 60;
 
@@ -36,7 +38,7 @@ export async function POST(req: Request) {
 
     try {
       session = hasUser
-        ? await composio.create(userId!, { toolkits: ALL_TOOLKITS })
+        ? await getComposio().create(userId!, { toolkits: ALL_TOOLKITS })
         : null;
       const rawTools = hasUser && session ? await session.tools() : {};
 

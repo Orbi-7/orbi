@@ -1,9 +1,11 @@
 import { Composio } from "@composio/core";
 import { NextRequest } from "next/server";
 
-const composio = new Composio({
-  apiKey: process.env.COMPOSIO_API_KEY!,
-});
+function getComposio() {
+  return new Composio({
+    apiKey: process.env.COMPOSIO_API_KEY as string,
+  });
+}
 
 export async function GET(req: NextRequest) {
   const userId = req.nextUrl.searchParams.get("userId");
@@ -13,7 +15,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const session = await composio.create(userId);
+    const session = await getComposio().create(userId);
     const toolkits = await session.toolkits();
 
     const result = toolkits.items.map((t) => ({

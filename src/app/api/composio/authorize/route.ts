@@ -1,9 +1,11 @@
 import { Composio } from "@composio/core";
 import { NextRequest } from "next/server";
 
-const composio = new Composio({
-  apiKey: process.env.COMPOSIO_API_KEY!,
-});
+function getComposio() {
+  return new Composio({
+    apiKey: process.env.COMPOSIO_API_KEY as string,
+  });
+}
 
 const TOOLKIT_MAP: Record<string, string> = {
   googlecalendar: "googlecalendar",
@@ -32,7 +34,7 @@ export async function GET(req: NextRequest) {
   const composioToolkit = TOOLKIT_MAP[normalizedToolkit] ?? normalizedToolkit;
 
   try {
-    const session = await composio.create(userId);
+    const session = await getComposio().create(userId);
     const connectionRequest = await session.authorize(composioToolkit, {
       callbackUrl: `${req.nextUrl.origin}/chat?status=connected`,
     });
