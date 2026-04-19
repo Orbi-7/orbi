@@ -45,14 +45,14 @@ export async function POST(req: Request) {
         const originalTool = rawTools[toolName];
         wrappedTools[toolName] = {
           ...originalTool,
-          execute: async (args: any) => {
+          execute: async (args: any, options: any) => {
             let lastError: Error | null = null;
             const maxRetries = 2;
 
             for (let attempt = 0; attempt <= maxRetries; attempt++) {
               try {
                 if (!originalTool.execute) throw new Error(`Tool ${toolName} missing execute method`);
-                const result = await originalTool.execute(args);
+                const result = await originalTool.execute(args, options);
                 return result;
               } catch (error) {
                 lastError = error as Error;
