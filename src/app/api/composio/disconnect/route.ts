@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Disconnect the account
-    await targetToolkit.connection.disconnect();
+    await (targetToolkit.connection as any).disconnect();
 
     return Response.json({
       success: true,
