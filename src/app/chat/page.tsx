@@ -10,7 +10,7 @@ import type { Id } from "../../../convex/_generated/dataModel";
 import { api } from "../../../convex/_generated/api";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, Suspense } from "react";
 import { Menu, Settings, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UserButton } from "@clerk/nextjs";
@@ -19,7 +19,7 @@ import { useSearchParams } from "next/navigation";
 import { BrokenCubeLogo } from "@/components/BrokenCubeLogo";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 
-export default function ChatPage() {
+function ChatContent() {
   const searchParams = useSearchParams();
   const { user, isLoaded } = useUser();
   const userId = user?.id ?? "";
@@ -537,5 +537,20 @@ export default function ChatPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ChatPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-screen items-center justify-center font-mono bg-[var(--background)]">
+        <div className="text-center">
+          <div className="mx-auto h-8 w-8 animate-pulse bg-[var(--accent)]" />
+          <p className="mt-4 text-sm text-[var(--foreground)]/70 uppercase">BOOTING CHAT...</p>
+        </div>
+      </div>
+    }>
+      <ChatContent />
+    </Suspense>
   );
 }
