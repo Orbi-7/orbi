@@ -51,6 +51,7 @@ export async function POST(req: Request) {
 
             for (let attempt = 0; attempt <= maxRetries; attempt++) {
               try {
+                if (!originalTool.execute) throw new Error(`Tool ${toolName} missing execute method`);
                 const result = await originalTool.execute(args);
                 return result;
               } catch (error) {
