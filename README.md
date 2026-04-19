@@ -1,56 +1,55 @@
-<div align="center">
-  <img src="public/globe.svg" alt="ORBI Logo" width="100" />
-  
-  # ORBI: Tool Insights Agent
+# ORBI: Tool Insights Agent
 
-  <p><strong>An autonomous AI agent to unify your digital workspace (Jira, Slack, GitHub & more).</strong></p>
+An autonomous AI agent designed to unify digital workspaces by integrating directly with third-party platforms such as Jira, Slack, GitHub, and Google Workspace.
 
-  <p>
-    <img src="https://img.shields.io/badge/Next.js-16%20App%20Router-black?style=flat&logo=next.js" alt="Next.js" />
-    <img src="https://img.shields.io/badge/Convex-Realtime-blue?style=flat" alt="Convex" />
-    <img src="https://img.shields.io/badge/Vercel_AI_SDK-Streaming-black" alt="Vercel AI SDK" />
-    <img src="https://img.shields.io/badge/Composio-Agentic_Tools-blueviolet" alt="Composio" />
-    <img src="https://img.shields.io/badge/TailwindCSS-Fast-38B2AC?style=flat&logo=tailwind-css" alt="Tailwind" />
-  </p>
-</div>
+Built with Next.js, Convex, Vercel AI SDK, Composio, Clerk, and Tailwind CSS.
 
 ---
 
-## 📖 Overview
+## Overview
 
-**ORBI (Tool Insights Chat)** resolves the friction of modern "information siloing." Traditional workflow environments force users to constantly context-switch across dozens of SaaS platforms. 
-
-ORBI operates beyond standard chatbots. Built on an **agentic architecture** using **function-calling**, ORBI analyzes your prompts and securely integrates directly with third-party tools via **OAuth** to fetch, synthesize, and format live data into a singular streaming conversational interface.
-
-Ask ORBI:
-* *"What meetings are on my calendar today?"*
-* *"Summarize my active Jira tickets assigned to me."*
-* *"Read my latest unread Slack messages."*
+ORBI (Tool Insights Chat) resolves information siloing. Traditional workflow environments force users to context-switch across dozens of SaaS platforms. ORBI utilizes an agentic architecture fueled by function-calling to analyze prompts, securely integrate with external tools via OAuth, and fetch, synthesize, and format live data into a singular conversational interface.
 
 ---
 
-## ✨ Features
+## Features
 
-- **🌐 Cross-Platform Integrations**: Connect seamlessly to Google Workspace, Slack, Jira, GitHub, Notion, and more via `Composio`.
-- **🤖 Autonomous Intelligence**: Uses Vercel AI SDK and advanced foundational models (Anthropic, OpenAI, or Gemini) to execute programmatic tool requests dynamically.
-- **⚡ Real-time Reactive State**: Global chat history backed by `Convex` so thread data never feels sluggish to load.
-- **🔐 Secure Delegation**: Uses `Clerk` to safely associate complex OAuth token chains only to the authorized end-user.
-- **📊 Robust Observability**: Native telemetry mapped straight to `Langfuse` to monitor latency, tokens, and trace AI tool calls.
-- **🎨 Glassmorphic Interface**: Fully responsive, dynamic frontend stylized with Next.js and Tailwind CSS 4.
+- **Cross-Platform Integrations**: Connect seamlessly to Google Workspace, Slack, Jira, GitHub, Notion, and more via Composio.
+- **Autonomous Intelligence**: Uses the Vercel AI SDK and advanced foundational models to execute programmatic tool requests dynamically.
+- **Real-time Reactive State**: Global chat history backed by Convex for instantaneous thread loading.
+- **Secure Delegation**: Uses Clerk to safely associate OAuth token chains strictly to the authorized end-user.
+- **Robust Observability**: Native telemetry mapped straight to Langfuse to monitor latency, tokens, and trace AI tool calls.
 
 ---
 
-## 🚀 Quick Start
+## Screenshots
+
+*(Place your application screenshots in an `images/` directory and uncomment the sections below to display them)*
+
+<!-- 
+### Chat Interface
+![Chat Interface Demo](images/chat_interface.png)
+*Figure 1: The core conversational interface dynamically pulling live organizational data.*
+
+### Connector Configuration
+![Connectors Page](images/connectors.png)
+*Figure 2: The settings interface used to securely bind tools to your user profile.* 
+-->
+
+---
+
+## Setup Guide
+
+Follow these steps to configure and run the project locally.
 
 ### 1. Pre-requisites
 Ensure you have the following before you begin:
-- **Node.js**: `v20+` recommended.
-- A free **[Convex](https://dashboard.convex.dev)** account.
-- A free **[Composio](https://platform.composio.dev)** account (for API key).
-- A free **[Langfuse](https://cloud.langfuse.com)** account (optional, for tracing).
+- Node.js installed (v20+ recommended).
+- A free account on Convex (https://dashboard.convex.dev).
+- A free account on Composio (https://platform.composio.dev) to acquire an API key.
 
-### 2. Fork and Install
-Clone the repository recursively and install all essential packages:
+### 2. Install Dependencies
+Clone the repository and install the required packages:
 
 ```bash
 git clone https://github.com/Orbi-7/orbi.git
@@ -58,46 +57,42 @@ cd orbi
 npm install
 ```
 
-### 3. Setup Environment Variables
-Clone the `.env.example` file to create your own local secrets:
+### 3. Environment Variables
+Copy the example environment configuration to establish your local secrets:
 
 ```bash
 cp .env.example .env.local
 ```
 Fill out `.env.local` with the following:
-* `NEXT_PUBLIC_CONVEX_URL` — Acquired in the next step.
-* `COMPOSIO_API_KEY` — From your Composio settings.
-* `GOOGLE_GENERATIVE_AI_API_KEY` — (Or whichever LLM SDK token you prefer).
-* `LANGFUSE_SECRET_KEY` & `LANGFUSE_PUBLIC_KEY` — (Optional) For metrics.
+* `COMPOSIO_API_KEY` — Retrieved from your Composio developer settings.
+* `GOOGLE_GENERATIVE_AI_API_KEY` — Your specific language model token.
+* `LANGFUSE_SECRET_KEY` & `LANGFUSE_PUBLIC_KEY` — (Optional) Required only if monitoring metrics.
 
 ### 4. Initialize Database
 Bootstrap the Convex real-time deployment:
 ```bash
 npx convex dev
 ```
-*(This command will autonomously patch your `.env.local` to include your new Convex Backend URL).*
+Note: This process will intuitively prompt you to log into Convex and it will automatically append your `NEXT_PUBLIC_CONVEX_URL` to your `.env.local` file. Let this process run in the background.
 
-### 5. Launch the Agent
-In a separate terminal, spin up the local Next.js frontend:
+### 5. Launch the Application
+Open a new terminal window within the project directory and start the Next.js development server:
 ```bash
 npm run dev
 ```
 
-Navigate to `http://localhost:3000`. Create an account, authorize your connectors on the `/connectors` page, and jump straight into `/chat` to test your agent!
+Navigate to `http://localhost:3000` in your web browser. You can create an account, authorize your tool connectors under the settings page, and begin interacting with the agent.
 
 ---
 
-## 🧠 System Architecture
+## System Architecture
 
 * **Client**: React 19 Client components handling UI layout, streaming payload states, and Clerk authentication forms.
-* **Middle-Tier API**: Next.js Edge routes defining the `DefaultChatTransport`. Translates prompts into the `ai` module while binding Composio Toolkit mappings.
-* **Data Layer**: Convex Functions (`schema.ts`, `messages.ts`, `conversations.ts`) execute backend database mutations synchronously.
-* **Agent Evaluator**: Evaluates user goals against enabled Integrations, outputs JSON schema parameters to Composio, and resolves the returned structure into formatted Markdown strings.
+* **Middle-Tier API**: Next.js Edge routes defining the transport protocols and binding Composio Toolkit mappings.
+* **Data Layer**: Convex serverless functions execute backend database queries synchronously.
+* **Agent Evaluator**: Generates structured function requests from prompts, invokes Composio, and resolves the structure into Markdown responses.
 
 ---
 
-## 🤝 Contribution Guidelines
-This project is open-source. For massive architectural restructuring (e.g. migrating from Vercel AI SDK to LangGraph), please open an initial issue thread. If fixing minor UI mismatches or simple component refactoring, PRs are always welcome.
-
-## 📄 License
+## License
 This project is licensed under the MIT License.
