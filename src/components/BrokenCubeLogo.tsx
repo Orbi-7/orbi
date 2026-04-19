@@ -14,13 +14,13 @@ const PUZZLE_PIECES = [
   [0, 0, 1], [1, 0, 1], [0, 1, 1], [1, 1, 1],
 ];
 
-// Dark teal palette: no black, varied face tints
-const EDGE = "2px solid rgba(0, 211, 149, 0.9)";
-const FACE_FRONT = "#0d1f1c";
-const FACE_BACK = "#0f2522";
-const FACE_SIDE = "#112a26";
-const FACE_TOP = "#0e221f";
-const FACE_BOTTOM = "#0b1c19";
+// High contrast orange and brutalist monochrome palette
+const EDGE = "2px solid rgba(255, 85, 0, 0.9)";
+const FACE_FRONT = "#111111";
+const FACE_BACK = "#0a0a0a";
+const FACE_SIDE = "#050505";
+const FACE_TOP = "#1a1a1a";
+const FACE_BOTTOM = "#000000";
 
 function PuzzlePiece({ pos, scale }: { pos: [number, number, number]; scale: number }) {
   const s = UNIT * scale;
@@ -149,12 +149,12 @@ export function BrokenCubeLogo({ className = "", href = "/", size = "md", intera
       </div>
       {!standalone && (
         <span className={cn(
-          "font-serif font-bold tracking-tight text-[var(--foreground)]",
+          "font-mono font-bold tracking-tight text-[var(--foreground)]",
           size === "sm" && "text-sm",
           size === "md" && "text-base",
           size === "lg" && "text-lg"
         )}>
-          ORBI
+          [ORBI]
         </span>
       )}
     </div>

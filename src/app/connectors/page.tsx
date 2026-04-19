@@ -57,13 +57,13 @@ export default function ConnectorsPage() {
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-50 px-4 pt-4 pb-2">
-        <div className="mx-auto flex h-14 max-w-4xl items-center justify-between rounded-2xl border border-[var(--border)] bg-[var(--background)]/70 px-6 backdrop-blur-md">
+        <div className="mx-auto flex h-14 max-w-4xl items-center justify-between border border-[var(--border)] bg-[var(--card)] px-6">
           <BrokenCubeLogo href="/" size="md" />
           <div className="flex items-center gap-3">
             <ThemeToggle />
             <Link href="/chat">
-              <Button variant="outline" size="sm" className="border-[var(--border)]">
-                Open Chat
+              <Button variant="outline" size="sm" className="rounded-md border-[var(--border)] bg-[var(--background)] hover:bg-[var(--muted)]">
+                [Open Chat]
               </Button>
             </Link>
             <UserButton afterSignOutUrl="/" />
@@ -73,10 +73,10 @@ export default function ConnectorsPage() {
 
       <main className="mx-auto max-w-4xl px-6 py-12">
         {/* Personal Information */}
-        <Card className="mb-10 border-[var(--border)] bg-[var(--muted)]/30">
+        <Card className="mb-10 rounded-none border border-[var(--border)] bg-[var(--background)]">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <div className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--accent)]/15">
+              <div className="flex h-12 w-12 items-center justify-center bg-[var(--card)] border border-[var(--border)]">
                 {user?.imageUrl ? (
                   /* eslint-disable-next-line @next/next/no-img-element */
                   <img
@@ -103,7 +103,7 @@ export default function ConnectorsPage() {
             <Button
               variant="outline"
               size="sm"
-              className="border-[var(--border)]"
+              className="rounded-md font-mono border-[var(--border)] bg-[var(--card)] hover:bg-[var(--muted)]"
               onClick={() => openUserProfile?.()}
             >
               Manage account
@@ -111,10 +111,10 @@ export default function ConnectorsPage() {
           </CardHeader>
         </Card>
 
-        <h1 className="text-3xl font-semibold tracking-tight">
-          Connect your apps
+        <h1 className="font-mono text-3xl font-semibold uppercase tracking-tight text-[var(--foreground)]">
+          [Connect your apps]
         </h1>
-        <p className="mt-2 text-[var(--foreground)]/70">
+        <p className="mt-2 font-mono text-sm text-[var(--foreground)]/70">
           Attach tools below. Then ask questions in chat like &quot;What&apos;s on my calendar?&quot; or &quot;Summarize my Slack.&quot;
         </p>
 
@@ -124,11 +124,11 @@ export default function ConnectorsPage() {
             return (
               <Card
                 key={app.id}
-                className="border-[var(--border)] bg-[var(--muted)]/30 transition hover:border-[var(--accent)]/50"
+                className="rounded-none border border-[var(--border)] bg-[var(--card)] transition-colors hover:border-[var(--accent)]"
               >
                 <CardHeader className="pb-2">
                   <div className="flex items-center justify-between">
-                    <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl bg-[var(--muted)]">
+                    <div className="relative flex h-12 w-12 items-center justify-center overflow-hidden border border-[var(--border)] bg-[var(--background)] p-1">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={app.logo}
@@ -152,18 +152,18 @@ export default function ConnectorsPage() {
                 <CardContent>
                   <Button
                     size="sm"
-                    className="w-full bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90"
+                    className="w-full rounded-md font-mono transition-none bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90"
                     variant={connected ? "outline" : "default"}
                     disabled={connecting === app.id}
                     onClick={() => handleConnect(app.id)}
                   >
                     {connecting === app.id ? (
-                      "Connecting..."
+                      "[Connecting...]"
                     ) : connected ? (
-                      "Connected"
+                      "[Connected]"
                     ) : (
                       <>
-                        Connect <ExternalLink className="ml-1 h-3 w-3" />
+                        [Connect] <ExternalLink className="ml-2 h-3 w-3" />
                       </>
                     )}
                   </Button>
@@ -174,8 +174,8 @@ export default function ConnectorsPage() {
         </div>
 
         {loading && (
-          <div className="mt-8 text-center text-sm text-[var(--foreground)]/60">
-            Loading...
+          <div className="mt-8 text-center font-mono text-sm text-[var(--foreground)]/60">
+            [Loading...]
           </div>
         )}
       </main>

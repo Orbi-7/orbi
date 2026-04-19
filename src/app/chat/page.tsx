@@ -413,10 +413,26 @@ export default function ChatPage() {
           {!chatMessages.length && !messages?.length ? (
             <div className="flex flex-1 flex-col w-full min-w-0 items-stretch justify-center px-4 pb-8">
               <div className="mx-auto w-full max-w-2xl flex flex-col items-stretch gap-12">
-                <h1 className="text-center font-serif text-4xl font-normal uppercase tracking-tight text-[var(--foreground)] drop-shadow-sm md:text-5xl">
-                  ASK ORBI!
+                <h1 className="text-center font-mono text-4xl font-semibold tracking-tight text-[var(--foreground)] md:text-5xl">
+                  [ASK ORBI]
                 </h1>
-                <div className="flex w-full flex-col items-stretch gap-5 rounded-3xl border border-[var(--border)]/60 bg-[var(--card)]/50 p-6 shadow-lg shadow-black/5 backdrop-blur-sm">
+                <div className="flex w-full flex-col items-stretch gap-5 border border-[var(--border)] bg-[var(--card)] p-6">
+                  <div className="flex flex-wrap justify-center gap-2 mb-2">
+                    {[
+                      "What's on my calendar today?",
+                      "Summarize my open Jira issues.",
+                      "Check my recent Slack DMs.",
+                      "List my GitHub PRs in review."
+                    ].map((s, i) => (
+                      <button
+                        key={i}
+                        onClick={() => handleSendWithMessage(s)}
+                        className="rounded-md border border-[var(--border)] bg-[var(--background)] px-3 py-1.5 text-xs font-mono text-[var(--foreground)]/70 hover:border-[var(--accent)] hover:text-[var(--accent)] transition-colors text-left"
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
                   <ChatBar
                     input={input}
                     onInputChange={setInput}
@@ -431,7 +447,7 @@ export default function ChatPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="rounded-full border-[var(--border)] bg-[var(--background)]/50 backdrop-blur-md hover:bg-[var(--muted)]/50"
+                        className="rounded-md border-[var(--border)] bg-[var(--background)] hover:bg-[var(--muted)]"
                       >
                         <Settings className="mr-2 h-4 w-4" />
                         Connect apps
@@ -442,7 +458,7 @@ export default function ChatPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="rounded-full border-[var(--border)] bg-[var(--background)]/50 backdrop-blur-md hover:bg-[var(--muted)]/50"
+                        className="rounded-md border-[var(--border)] bg-[var(--background)] hover:bg-[var(--muted)]"
                       >
                         Sign in to connect apps
                       </Button>
@@ -494,14 +510,14 @@ export default function ChatPage() {
                         />
                       ))}
                   {isLoading && !chatMessages.some((m) => m.role === "assistant") && (
-                    <div className="flex py-3">
-                      <div className="flex items-center gap-1.5 rounded-3xl bg-[var(--assistant-bg)] border border-[var(--border)] px-4 py-3">
-                        <span className="text-xs font-medium text-[var(--foreground)]/60">ORBI</span>
-                        <div className="flex gap-1">
-                          <span className="h-2 w-2 animate-bounce rounded-full bg-[var(--accent)]" style={{ animationDelay: "0ms" }} />
-                          <span className="h-2 w-2 animate-bounce rounded-full bg-[var(--accent)]" style={{ animationDelay: "150ms" }} />
-                          <span className="h-2 w-2 animate-bounce rounded-full bg-[var(--accent)]" style={{ animationDelay: "300ms" }} />
-                        </div>
+                    <div className="flex w-full py-4 border-b border-[var(--border)] bg-[var(--assistant-bg)]">
+                      <div className="w-full px-4 md:px-0">
+                        <p className="text-xs font-mono mb-2 uppercase tracking-wider text-[var(--accent)]">
+                          {">"} ORBI
+                        </p>
+                        <p className="whitespace-pre-wrap leading-relaxed font-mono flex">
+                          <span className="inline-block h-4 w-2 animate-pulse bg-[var(--accent)]" />
+                        </p>
                       </div>
                     </div>
                   )}

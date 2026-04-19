@@ -29,14 +29,14 @@ export function ChatHistory({
   onDelete,
 }: ChatHistoryProps) {
   return (
-    <div className="flex h-full w-64 shrink-0 flex-col overflow-hidden rounded-r-2xl bg-[var(--muted)]/30">
-      <div className="flex items-center justify-between border-b border-[var(--border)] rounded-tr-2xl p-3">
-        <span className="text-sm font-medium text-[var(--foreground)]">Chats</span>
+    <div className="flex h-full w-64 shrink-0 flex-col overflow-hidden border-r border-[var(--border)] bg-[var(--background)]">
+      <div className="flex items-center justify-between border-b border-[var(--border)] p-3">
+        <span className="text-sm font-mono tracking-tight uppercase text-[var(--foreground)]">Chats</span>
         <Button
           size="icon"
           variant="ghost"
           onClick={onNew}
-          className="h-9 w-9 rounded-full hover:bg-[var(--accent)]/20"
+          className="h-9 w-9 rounded-md border border-[var(--border)] bg-[var(--background)] hover:border-[var(--accent)] hover:text-[var(--accent)]"
         >
           <Plus className="h-4 w-4" />
         </Button>
@@ -52,10 +52,10 @@ export function ChatHistory({
               <div
                 key={conv._id}
                 className={cn(
-                  "group flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm transition-colors",
+                  "group flex items-center gap-2 px-3 py-2.5 text-sm font-mono transition-colors border-l-2",
                   activeId === conv._id
-                    ? "bg-[var(--accent)]/20 text-[var(--foreground)]"
-                    : "hover:bg-[var(--muted)]/50"
+                    ? "border-[var(--accent)] bg-[var(--muted)] text-[var(--foreground)]"
+                    : "border-transparent hover:border-[var(--border)] hover:bg-[var(--card)]"
                 )}
               >
                 <button

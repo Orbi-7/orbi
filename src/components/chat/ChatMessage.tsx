@@ -34,38 +34,27 @@ export function ChatMessage({ role, content, isStreaming, searchHighlight }: Cha
   return (
     <div
       className={cn(
-        "flex w-full py-3",
-        isUser ? "justify-end" : "justify-start"
+        "flex w-full py-4 border-b border-[var(--border)]",
+        isUser ? "bg-[var(--background)]" : "bg-[var(--assistant-bg)]"
       )}
     >
-      <div
-        className={cn(
-          "overflow-hidden rounded-3xl px-4 py-3 shadow-sm",
-          isUser
-            ? "max-w-[80%] bg-[var(--accent)]"
-            : "max-w-full bg-[var(--assistant-bg)] border border-[var(--border)]"
-        )}
-      >
+      <div className="w-full px-4 md:px-0">
         <p
           className={cn(
-            "text-xs font-medium mb-1",
-            isUser ? "text-[var(--accent-foreground)]/80" : "text-[var(--foreground)]/60"
+            "text-xs font-mono mb-2 uppercase tracking-wider",
+            isUser ? "text-[var(--foreground)]/50" : "text-[var(--accent)]"
           )}
         >
-          {isUser ? "You" : "ORBI"}
+          {isUser ? "> USER" : "> ORBI"}
         </p>
         <p
           className={cn(
-            "whitespace-pre-wrap leading-relaxed",
-            isUser ? "text-[var(--accent-foreground)]" : "text-[var(--foreground)]"
+            "whitespace-pre-wrap leading-relaxed font-mono text-sm",
+            isUser ? "text-[var(--foreground)]/90" : "text-[var(--foreground)]"
           )}
         >
           {showThinking ? (
-            <span className="flex gap-1">
-              <span className="h-2 w-2 animate-bounce rounded-full bg-[var(--accent)]" style={{ animationDelay: "0ms" }} />
-              <span className="h-2 w-2 animate-bounce rounded-full bg-[var(--accent)]" style={{ animationDelay: "150ms" }} />
-              <span className="h-2 w-2 animate-bounce rounded-full bg-[var(--accent)]" style={{ animationDelay: "300ms" }} />
-            </span>
+            <span className="inline-block h-4 w-2 animate-pulse bg-[var(--accent)]" />
           ) : (
             contentToShow
           )}

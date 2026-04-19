@@ -49,14 +49,14 @@ export function ChatBar({
           onChange={(e) => onInputChange(e.target.value)}
           placeholder={placeholder}
           disabled={isLoading}
-          className="flex-1 min-h-[56px] rounded-2xl border-[var(--border)] bg-[var(--muted)] px-5 text-base shadow-sm focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-0"
+          className="flex-1 min-h-[56px] rounded-md border-[var(--border)] bg-[var(--background)] px-5 text-base font-mono shadow-sm focus-visible:ring-1 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-0"
         />
         {showStop ? (
           <Button
             type="button"
             size="icon"
             onClick={onStop}
-            className="h-14 w-14 shrink-0 rounded-2xl bg-red-500/90 text-white hover:bg-red-600"
+            className="h-14 w-14 shrink-0 rounded-md border border-red-500 bg-red-500/10 text-red-500 hover:bg-red-500/20"
             title="Stop generating"
           >
             <Square className="h-5 w-5 fill-current" />
@@ -66,7 +66,7 @@ export function ChatBar({
             type="submit"
             size="icon"
             disabled={!input.trim() || isLoading}
-            className="h-14 w-14 shrink-0 rounded-2xl bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90"
+            className="h-14 w-14 shrink-0 rounded-md bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90"
           >
             <Send className="h-5 w-5" />
           </Button>
